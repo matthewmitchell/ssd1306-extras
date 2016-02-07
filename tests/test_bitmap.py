@@ -89,6 +89,10 @@ class TestDrawImage(object):
         bmap.draw_image(small_rec, 0, 3)
         assert_bits_set(bmap, expected=expected)
 
+    def test_should_contain_inverted_image(self, bmap, small_rec):
+        bmap.draw_image(small_rec, 0, 0, invert=True)
+        assert_bits_set(bmap, expected=[9, 10, 11])
+
 
 class TestGetBitmap(object):
 

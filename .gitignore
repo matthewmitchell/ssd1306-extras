@@ -1,2 +1,3 @@
 *.pyc
 .cache
+ssd1306_extras.egg-info

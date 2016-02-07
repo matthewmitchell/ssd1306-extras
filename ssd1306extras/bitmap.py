@@ -13,7 +13,7 @@ class Bitmap(object):
         self.bits = bitarray(width * height)
         self.bits.setall(False)
 
-    def draw_image(self, image, x=0, y=0):
+    def draw_image(self, image, x=0, y=0, invert=False):
         """Adds a PIL Image file to the bitmap
 
         Args:
@@ -23,6 +23,9 @@ class Bitmap(object):
         """
         image_width, image_height = image.size
         image_bit_array = bitarray([byte for byte in image.getdata()])
+
+        if invert:
+            image_bit_array.invert()
 
         # Calculate the number of columns that fit on the bitmap
         draw_cols = image_width if image_width + x < self.width else (self.width - x)
