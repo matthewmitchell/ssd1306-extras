@@ -56,6 +56,16 @@ class Bitmap(object):
 
             self.bits[start:end] = image_bit_array[image_start:image_end]
 
+    def draw_bitmap(self, bitmap, x=0, y=0):
+        """Adds a Bitmap to the bitmap
+
+        Args:
+            bitmap (Bitmap): Bitmap to add to the current bitmap
+            x (int): Horizontal start position for image
+            y (int): Vertical start position for image
+        """
+        pass
+
     def invert(self):
         """Inverts the bitmap
         """
