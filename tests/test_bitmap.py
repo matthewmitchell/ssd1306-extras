@@ -1,5 +1,5 @@
 import pytest
-from extras import bitmap
+from ssd1306extras import bitmap
 from PIL import Image
 
 
