@@ -3,18 +3,6 @@ import collections
 from PIL import Image, ImageDraw, ImageFont
 
 
-class HAlign(object):
-    CENTER = 1
-    LEFT = 2
-    RIGHT = 3
-
-
-class VAlign(object):
-    CENTER = 1
-    TOP = 2
-    BOTTOM = 3
-
-
 Margin = collections.namedtuple('Margin', ['top', 'right', 'bottom', 'left'])
 
 
@@ -27,7 +15,7 @@ def image(text, font_file, size, width=None, height=None, expand=False, margin=N
         size (int): Font size of the text
         width (int): Width of the image
         height (int): Height of the image
-        expand (bool): If True, image will be expanded to fit text
+        expand (bool): If True, image will be horizontally expanded to fit text
         h_align (Align type): Horizontal alignment of text
         v_align (Align type): Vertical alignment of text
         margin (int): Placement for text
@@ -37,6 +25,9 @@ def image(text, font_file, size, width=None, height=None, expand=False, margin=N
     """
     font = _create_font(font_file, size)
     image = Image.new('1', (width, height))
+
+    if margin is None:
+        margin = Margin(0, 0, 0, 0)
 
     image_draw = ImageDraw.Draw(image)
 
@@ -65,13 +56,18 @@ def find_top_margin(font_file, size, height):
     """
     font = _create_font(font_file, size)
 
-    ascender_bbox = _get_bounding_box('A', font)
-    descender_bbox = _get_bounding_box('g', font)
+    ascender_bbox = _get_bounding_box('ATP', font)
+    descender_bbox = _get_bounding_box('gpj', font)
 
     top_padding = ascender_bbox[3] - (ascender_bbox[3] - ascender_bbox[1])
     visual_height = descender_bbox[3] - ascender_bbox[1]
 
-    top_margin = ((height - visual_height) / 2) - top_padding
+    vertical_margin = height - visual_height
+
+    if not vertical_margin % 2:
+        vertical_margin += 1
+
+    top_margin = (vertical_margin / 2) - top_padding + 1
 
     return Margin(top=top_margin, right=0, bottom=0, left=0)
 
@@ -90,7 +86,7 @@ def _get_bounding_box(text, font):
     image = Image.new('1', (1, 1))
     image_draw = ImageDraw.Draw(image)
 
-    text_width, text_height = image_draw.textsize('A', font=font)
+    text_width, text_height = image_draw.textsize(text, font=font)
 
     image = image.resize((text_width, text_height))
     image_draw = ImageDraw.Draw(image)

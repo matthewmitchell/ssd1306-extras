@@ -10,29 +10,30 @@ class Panel(object):
         self.width = width if width is not None else ssd_display.cols
         self.height = height if height is not None else ssd_display.rows
 
-        self._bitmap = bitmap.Bitmap(width, height)
+        self._bitmap = bitmap.Bitmap(self.width, self.height)
         self.top = top
         self.left = left
         self._panels = []
         self._item = None
 
     def draw(self, refresh=False):
-        bitmap = self.get_bitmap()
+        bitmap = self.bitmap
         self.ssd_display.clear_display()
 
         if refresh:
             self.ssd_display.display()
 
-        self.ssd_display.display_block(bitmap, self.top, self.left, self.width)
+        self.ssd_display.display_block(bitmap.get_bitmap(), self.top, self.left, self.width)
 
-    def get_bitmap(self):
+    @property
+    def bitmap(self):
         """Returms the bitmap for the panel
         """
         for panel in self._panels:
-            self._bitmap.draw_bitmap(panel.get_bitamp(), panel.top, panel.left)
+            self._bitmap.draw_bitmap(panel.bitmap, panel.left, panel.top)
 
         if self._item is not None:
-            self._bitmap.draw_bitmap(self._item.get_bitmap(), 0, 0)
+            self._bitmap.draw_bitmap(self._item.bitmap, 0, 0)
 
         return self._bitmap
 
@@ -74,9 +75,13 @@ class Panel(object):
             positions.append(self.height)
 
         panels = []
-        left = 0
+        top = 0
         for i in range(len(positions)-1):
-            width = positions[i+1] - positions[i]
-            panel = Panel(self.ssd_display, width, self.height, top=0, left=left)
+            height = positions[i+1] - positions[i]
+            panel = Panel(self.ssd_display, self.width, height, top=top, left=0)
             panels.append(panel)
-            left += width
+            top += height
+
+        self._panels += panels
+
+        return panels

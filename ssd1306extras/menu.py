@@ -1,3 +1,4 @@
+from gaugette.fonts import arial_16
 import os.path
 
 import bitmap
@@ -22,8 +23,8 @@ class TextItem(object):
             height (int): Height of item
         """
         self.text = text
-        self.height = height
-        self.width = width
+        self._height = height
+        self._width = width
         self._bitmap = None
 
     @property
@@ -54,7 +55,7 @@ class TextItem(object):
         cls._margin = cls._margin._replace(left=value)
 
     def create_bitmap(self):
-        img = util.text.image(self.text, self._font_file, self._font_size, self.width, self._height,
+        img = util.text.image(self.text, self._font_file, self._font_size, self._width, self._height,
                               margin=self._margin)
         self._bitmap = img
 
@@ -124,16 +125,17 @@ class TextListMenu(object):
             new_item = self.TextItem(text, self.item_width, self.item_height)
             self._items.append(new_item)
 
-    def set_font(self, font_file):
+    def set_font(self, font_file, size):
         if not os.path.isfile(font_file):
             raise IOError('Cannot find font: {0}'.format(font_file))
         self.TextItem.set_font_file(font_file)
+        self.TextItem.set_font_size(size)
 
     def draw(self):
         for item, start_row, selected in self._find_displayable_items():
             self._bitmap.draw_image(item.bitmap, 0, start_row, invert=selected)
-
-        self.ssd_display.display_block(self._bitmap.get_bitmap(), 0, 0, self._bitmap.width)
+        bmap = self._bitmap.get_bitmap()
+        self.ssd_display.display_block(bmap, 0, 0, self._bitmap.width)
 
     def _find_displayable_items(self):
         """Finds the items to be rendered on the display
@@ -157,7 +159,7 @@ class TextListMenu(object):
             selected = i == self.selected_index
 
             displayable_items.append((self._items[i], start_row, selected))
-            start_row += self._items[i].height
+            start_row += self._items[i]._height
 
         return displayable_items
 
