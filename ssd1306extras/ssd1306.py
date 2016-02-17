@@ -37,3 +37,21 @@ class SSD1306(gaugette.ssd1306.SSD1306):
 
             if self.data is None:
                 self.data = [0] * (self.cols * self.bytes_per_col)
+
+        def dump(self):
+            if self.mode == gaugette.ssd1306.SSD1306.MEMORY_MODE_VERT or self.mode is None:
+                super(SSD1306.Bitmap, self).dump()
+                return
+
+            for y in range(0, self.rows, 8):
+                mem_row = y / 8
+                for i in range(0, 8):
+                    line = ''
+                    for x in range(0, self.cols):
+                        bit_mask = 1 << (i)
+                        offset = x + (mem_row * self.cols)
+                        if self.data[offset] & bit_mask:
+                            line += '*'
+                        else:
+                            line += ' '
+                    print('|'+line+'|')

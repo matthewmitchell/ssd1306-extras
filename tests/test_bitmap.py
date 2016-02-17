@@ -97,8 +97,9 @@ class TestDrawImage(object):
 class TestGetBitmap(object):
 
     def test_should_return_valid_bitmap(self, small_rec):
-        expected = [7, 0, 5, 0, 5, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 5, 0, 5, 0,
-                    229, 0, 167, 0, 160, 0, 160, 0, 224]
+        expected = [7, 5, 5, 5, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 7, 5, 5, 229, 167, 160, 160, 224]
+
         bmap = bitmap.Bitmap(16, 16)
         bmap.draw_image(small_rec, 0, 0)
         bmap.draw_image(small_rec, 8, 8)
