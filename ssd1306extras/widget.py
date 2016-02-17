@@ -4,8 +4,7 @@ import util.text
 
 class TextWidget(object):
 
-    def __init__(self, parent):
-        self._parent = parent
+    def __init__(self, width, height):
         self._bitmap = None
         self._text = ''
 
@@ -13,8 +12,8 @@ class TextWidget(object):
         self._font_file = None
         self._margin = util.text.Margin(0, 0, 0, 0)
 
-        self._width = parent.width
-        self._height = parent.height
+        self._width = width
+        self._height = height
 
     @property
     def bitmap(self):
@@ -64,10 +63,9 @@ class TextWidget(object):
 
 class ProgressWidget(object):
 
-    def __init__(self, parent):
-        self.parent = parent
-        self._width = parent.width
-        self._height = parent.height
+    def __init__(self, width, height):
+        self._width = width
+        self._height = height
 
         self._bitmap = bitmap.Bitmap(self._width, self._height)
         self._percent = 0.0
@@ -116,10 +114,9 @@ class IconOptionWidget(object):
         def height(self):
             return self.bitmap.height
 
-    def __init__(self, parent):
-        self.parent = parent
-        self._width = parent.width
-        self._height = parent.height
+    def __init__(self, width, height):
+        self._width = width
+        self._height = height
 
         self._bitmap = bitmap.Bitmap(self._width, self._height)
         self._icons = []
@@ -129,11 +126,14 @@ class IconOptionWidget(object):
     def bitmap(self):
         self._bitmap.clear()
         x = y = 0
+
         for icon in self._icons:
             if not icon.enabled:
                 continue
+
             self._draw_icon(icon, x, y)
             x += icon.width
+
         return self._bitmap
 
     def add_icon(self, image_path, label, id, option):
@@ -172,6 +172,15 @@ class IconOptionWidget(object):
         self._icons[self.selected].selected = True
 
         return self._icons[self.selected].label
+
+    def select_id(self, id):
+        self.clear_selected()
+
+        for i, icon in enumerate(self._icons):
+            if icon.id == id:
+                icon.selected = True
+                self.selected = i
+                return icon.label
 
     def find_selected(self):
         """Returns the index of the currently selected icon
