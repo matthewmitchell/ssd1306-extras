@@ -1,4 +1,3 @@
-from gaugette.fonts import arial_16
 import os.path
 
 import bitmap

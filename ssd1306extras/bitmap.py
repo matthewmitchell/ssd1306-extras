@@ -137,17 +137,19 @@ class Bitmap(object):
         """Creates a gaugette Bitmap
         """
         mode = ssd1306extras.ssd1306.SSD1306.MEMORY_MODE_HORIZ
-        page_size = self.width * 8
-        gaug_bytes = bytearray(self.width * self.height / 8)
+        width = self.width
+        height = self.height
+        page_size = width * 8
+        gaug_bytes = bytearray(width * height / 8)
 
         for i, bit in enumerate(self.bits):
-            page = i/page_size
-            bit_shift = (i % page_size) / self.width
-            byte_pos = i % self.width + (page * self.width)
             if bit:
-                gaug_bytes[byte_pos] = gaug_bytes[byte_pos] | (0xFF & (0x01 << bit_shift))
+                page = i/page_size
+                bit_shift = (i % page_size) / width
+                byte_pos = i % width + (page * width)
+                gaug_bytes[byte_pos] = gaug_bytes[byte_pos] | (0x01 << bit_shift)
 
-        gaug_bitmap = ssd1306extras.ssd1306.SSD1306.Bitmap(self.width, self.height, list(gaug_bytes), mode)
+        gaug_bitmap = ssd1306extras.ssd1306.SSD1306.Bitmap(width, height, list(gaug_bytes), mode)
         return gaug_bitmap
 
 
